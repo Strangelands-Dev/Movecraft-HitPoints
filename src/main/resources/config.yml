@@ -1,0 +1,10 @@
+BaseHitPointMultiplier: 0.5
+BaseDamageMultiplier: 1.0
+DamageThreshold: 0.5
+CriticalThreshold: 0.25
+TorpedoDamageMultiplier: 50.0
+BlockDamageMultiplier:
+  Stone: 1.5
+  Oak_Planks: 2.0
+HitPointModifierBlocks:
+  "minecraft:wool": 1.5

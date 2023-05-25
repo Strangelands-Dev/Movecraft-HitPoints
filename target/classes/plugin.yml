@@ -1,0 +1,15 @@
+name: Movecraft-HitPoints
+version: '1.0.0'
+main: me.goodroach.movecrafthp.MovecraftHitPoints
+api-version: 1.16
+depend: [Movecraft]
+commands:
+  hitpoint:
+    description: Your command description
+    permissions:
+      hitpoint.check: # Permission for 'check' subcommand
+        description: Permission to use the 'check' subcommand
+      hitpoint.remove: # Permission for 'remove' subcommand
+        description: Permission to use the 'remove' subcommand
+      hitpoint.reload: # Permission for 'reload' subcommand
+        description: Permission to use the 'reload' subcommand

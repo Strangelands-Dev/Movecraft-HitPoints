@@ -1,0 +1,10 @@
+me\goodroach\movecrafthp\listeners\MovecraftListener.class
+me\goodroach\movecrafthp\commands\HitPointCommands.class
+me\goodroach\movecrafthp\config\ConfigManager.class
+me\goodroach\movecrafthp\MovecraftHitPoints.class
+me\goodroach\movecrafthp\hitpoints\HitPointManager.class
+me\goodroach\movecrafthp\config\Settings.class
+me\goodroach\movecrafthp\hitpoints\CraftHitPoints.class
+me\goodroach\movecrafthp\listeners\DamageListener.class
+me\goodroach\movecrafthp\config\Keys.class
+me\goodroach\movecrafthp\hitpoints\CraftHitPointState.class
