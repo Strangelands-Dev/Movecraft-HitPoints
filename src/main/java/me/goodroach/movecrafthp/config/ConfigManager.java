@@ -1,7 +1,11 @@
 package me.goodroach.movecrafthp.config;
 
 import me.goodroach.movecrafthp.MovecraftHitPoints;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,7 +22,6 @@ public class ConfigManager {
 
     public ConfigManager() {
         configFile = new File(MovecraftHitPoints.getInstance().getDataFolder(), "config.yml");
-        config = YamlConfiguration.loadConfiguration(configFile);
     }
 
     private void listReader(String configPath, Map<Material, Double> map) {
@@ -58,7 +61,7 @@ public class ConfigManager {
                         Level.WARNING, "Invalid tag: " + name);
             }
         } else {
-            Material material = Material.matchMaterial(name);
+            Material material = Material.matchMaterial(name.toUpperCase());
             if (material != null) {
                 blocks.add(material);
             }
@@ -67,6 +70,7 @@ public class ConfigManager {
     }
 
     public void reloadConfig() {
+        config = YamlConfiguration.loadConfiguration(configFile);
         Settings.BaseHitPointMultiplier = config.getDouble("BaseHitPointMultiplier", 1.0);
         Settings.BaseDamageMultiplier = config.getDouble("BaseDamageMultiplier", 1.0);
         Settings.DamageThreshold = config.getDouble("DamageThreshold", 0.99);
@@ -79,6 +83,15 @@ public class ConfigManager {
 
         if (config.contains("HitPointModifierBlocks")) {
             listReader("HitPointModifierBlocks", Settings.HitPointModifierBlocks);
+        }
+
+        System.out.println(config.getStringList("IgnoreBlockProtection"));
+
+        for (String s : config.getStringList("IgnoreBlockProtection")) {
+            List<Material> materialList = getBlocks(s);
+            for (Material m : materialList) {
+                Settings.IgnoreBlockProtection.add(m);
+            }
         }
     }
 

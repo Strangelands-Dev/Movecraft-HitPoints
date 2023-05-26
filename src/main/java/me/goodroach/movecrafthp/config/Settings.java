@@ -3,7 +3,9 @@ package me.goodroach.movecrafthp.config;
 import org.bukkit.Material;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Settings {
     //These are the global settings that apply to all craft types that turned on the HP system for them.
@@ -14,4 +16,5 @@ public class Settings {
     public static double TorpedoDamageMultiplier = 100.0;
     public static Map<Material, Double> BlockDamageMultiplier = new HashMap<>();
     public static Map<Material, Double> HitPointModifierBlocks = new HashMap<>();
+    public static Set<Material> IgnoreBlockProtection = new HashSet<>();
 }

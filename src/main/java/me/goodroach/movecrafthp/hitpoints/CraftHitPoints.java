@@ -37,11 +37,6 @@ public class CraftHitPoints {
         }
 
         this.hitPoints = baseHPMult * craft.getOrigBlockCount() + addedHP;
-
-        //TODO: Remove debug
-        System.out.print("Base HP is: " + baseHPMult * craft.getOrigBlockCount());
-        System.out.print("Added HP is: " + addedHP);
-
         this.currentHitPoints = hitPoints;
         this.hitPointState = CraftHitPointState.FULL;
 

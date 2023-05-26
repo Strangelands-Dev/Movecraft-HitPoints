@@ -32,7 +32,6 @@ public final class MovecraftHitPoints extends JavaPlugin {
         getCommand("hitpoint").setExecutor(new HitPointCommands());
     }
 
-
     @Override
     public void onDisable() {
         // Plugin shutdown logic

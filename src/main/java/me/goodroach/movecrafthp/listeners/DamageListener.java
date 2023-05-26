@@ -12,6 +12,7 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.events.ExplosionEvent;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -20,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Iterator;
 
 public class DamageListener implements Listener {
@@ -46,6 +48,10 @@ public class DamageListener implements Listener {
             boolean protectCraftBlock = false;
             double modifier = 1.0;
 
+            if(Settings.BlockDamageMultiplier.containsKey(block.getType())) {
+                modifier = Settings.BlockDamageMultiplier.get(block.getType());
+            }
+
             if (craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(block.getLocation()))) {
                 hitPointDamage += modifier * damagePerHit * craftDamagePerHit;
             }
@@ -59,11 +65,14 @@ public class DamageListener implements Listener {
                 protectCraftBlock = false;
             }
 
+            if (Settings.IgnoreBlockProtection.contains(block.getType())) {
+                protectCraftBlock = false;
+            }
+
             if (protectCraftBlock) {
                 iterator.remove();
             }
         }
-
         craftHP.removeHitPoints(hitPointDamage);
     }
 

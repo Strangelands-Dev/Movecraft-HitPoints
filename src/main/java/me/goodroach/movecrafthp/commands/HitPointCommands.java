@@ -61,6 +61,7 @@ public class HitPointCommands implements CommandExecutor {
             return reloadCommand(sender);
         }
 
+        sender.sendMessage(ChatUtils.ERROR_PREFIX + " Incorrect argument. Valid arguments include: 'check' 'reload' 'remove'");
         return false;
     }
 
@@ -131,7 +132,8 @@ public class HitPointCommands implements CommandExecutor {
 
     private boolean reloadCommand(CommandSender sender) {
         MovecraftHitPoints.getInstance().getConfigManager().reloadConfig();
-        sender.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + " Successfully reloaded.");
+        MovecraftHitPoints.getInstance().saveDefaultConfig();
+        sender.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + " Successfully reloaded the configuration.");
         return true;
     }
 }
