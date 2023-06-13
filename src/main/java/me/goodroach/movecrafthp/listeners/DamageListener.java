@@ -38,6 +38,10 @@ public class DamageListener implements Listener {
         double craftDamagePerHit = craft.getType().getDoubleProperty(Keys.CRAFT_DAMAGE_MODIFIER);
         CraftHitPoints craftHP = MovecraftHitPoints.getInstance().getHitPointManager().getCraftHitPoints(craft);
 
+        if (craftHP == null) {
+            return;
+        }
+
         Iterator<Block> iterator = event.blockList().iterator();
         while (iterator.hasNext()) {
             Block block = iterator.next();
