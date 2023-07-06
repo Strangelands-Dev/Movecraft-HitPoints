@@ -27,6 +27,7 @@ The plugin offers global settings and per-craft settings that can be adjusted in
 - TorpedoDamageMultiplier: Multiplier for the damage caused by torpedo explosions.
 - BlockDamageMultiplier: A list of blocks and their respective values that increase damage per hit by TNT.
 - HitPointModifierBlocks: A list of blocks and their respective values that additively increase hit points.
+- IgnoreBlockProtection: A list of blocks that you don't want to be protected by the HP system. Useful if you want certain blocks like armor or engines to get destroyed. 
 
 **Per-Craft Settings:**
 
