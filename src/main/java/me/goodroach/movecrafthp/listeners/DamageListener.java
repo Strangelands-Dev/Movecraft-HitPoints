@@ -84,15 +84,14 @@ public class DamageListener implements Listener {
     public void onTorpedoExplode(ExplosionEvent e) {
         Location loc = e.getExplosionLocation();
         PlayerCraft craft = fastNearestPlayerCraftToLoc(loc);
-        if (craft == null || e.isCancelled())
-            return;
+        if (craft == null || e.isCancelled()) return;
+        if (!craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(loc))) return;
 
-        if (!craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(loc))) {
-            return;
-        }
+        CraftHitPoints craftHP = MovecraftHitPoints.getInstance().getHitPointManager().getCraftHitPoints(craft);
+        if (craftHP == null) return;
 
         double hitPointDamage = e.getExplosionStrength() * Settings.TorpedoDamageMultiplier;
-        MovecraftHitPoints.getInstance().getHitPointManager().getCraftHitPoints(craft).removeHitPoints(hitPointDamage);
+        craftHP.removeHitPoints(hitPointDamage);
     }
 
     private PlayerCraft fastNearestPlayerCraftToLoc(@NotNull Location source) {
