@@ -1,6 +1,6 @@
 # Movecraft-HitPoints
 
-Movecraft-HitPoints is an addon plugin for the Movecraft plugin, designed to enhance the ship-building experience by adding hit points to your craft. It allows you to create ships that not only look impressive but also have a realistic durability aspect.
+Movecraft-HitPoints is an addon plugin for the Movecraft plugin, designed to enhance the ship-building experience by adding hit points to your craft.
 
 ## Features
 
