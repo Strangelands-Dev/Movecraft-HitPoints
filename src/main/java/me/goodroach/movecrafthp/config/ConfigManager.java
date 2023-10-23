@@ -76,6 +76,7 @@ public class ConfigManager {
         Settings.DamageThreshold = config.getDouble("DamageThreshold", 0.99);
         Settings.CriticalThreshold = config.getDouble("CriticalThreshold", 0.3);
         Settings.TorpedoDamageMultiplier = config.getDouble("TorpedoDamageMultiplier", 50.0);
+        Settings.AllowMeshArmor = config.getBoolean("AllowMeshArmor", false);
 
         if (config.contains("BlockDamageMultiplier")) {
             listReader("BlockDamageMultiplier", Settings.BlockDamageMultiplier);
@@ -84,8 +85,6 @@ public class ConfigManager {
         if (config.contains("HitPointModifierBlocks")) {
             listReader("HitPointModifierBlocks", Settings.HitPointModifierBlocks);
         }
-
-        System.out.println(config.getStringList("IgnoreBlockProtection"));
 
         for (String s : config.getStringList("IgnoreBlockProtection")) {
             List<Material> materialList = getBlocks(s);

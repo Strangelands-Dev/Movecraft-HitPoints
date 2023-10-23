@@ -17,4 +17,5 @@ public class Settings {
     public static Map<Material, Double> BlockDamageMultiplier = new HashMap<>();
     public static Map<Material, Double> HitPointModifierBlocks = new HashMap<>();
     public static Set<Material> IgnoreBlockProtection = new HashSet<>();
+    public static boolean AllowMeshArmor = false;
 }

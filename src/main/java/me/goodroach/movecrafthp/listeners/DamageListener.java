@@ -12,8 +12,8 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.events.ExplosionEvent;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,63 +21,65 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DamageListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onEntityExplode(EntityExplodeEvent event) {
-        Location location = event.getLocation();
-        PlayerCraft craft = fastNearestPlayerCraftToLoc(location);
-        if (craft == null || event.isCancelled()) {
-            return;
-        }
+    public void onTNTExplode(EntityExplodeEvent event) {
+        if (event.blockList().isEmpty()) return;
+        if (!event.getEntityType().equals(EntityType.PRIMED_TNT)) return;
+        if (event.isCancelled()) return;
 
         double damagePerHit = Settings.BaseDamageMultiplier;
-        double hitPointDamage = 0;
-        double craftDamagePerHit = craft.getType().getDoubleProperty(Keys.CRAFT_DAMAGE_MODIFIER);
-        CraftHitPoints craftHP = MovecraftHitPoints.getInstance().getHitPointManager().getCraftHitPoints(craft);
+        Map<PlayerCraft, Double> blocksBrokenPerCraft = new HashMap<>();
+        Set<Block> protectedBlocks = new HashSet<>();
 
-        if (craftHP == null) {
-            return;
+        for (Block block : event.blockList()) {
+            if (block == null) continue;
+            Location location = block.getLocation();
+            PlayerCraft craft = fastNearestPlayerCraftToLoc(location);
+
+            if (MovecraftHitPoints.getInstance().getHitPointManager().getCraftHitPoints(craft) == null) continue;
+            CraftHitPoints craftHP = MovecraftHitPoints.getInstance().getHitPointManager().getCraftHitPoints(craft);
+            if (!blocksBrokenPerCraft.containsKey(craft)) blocksBrokenPerCraft.put(craft, 0.0);
+            if (canProtectBlock(craft, block, craftHP)) {
+                protectedBlocks.add(block);
+            }
+            double modifier = Settings.BlockDamageMultiplier.getOrDefault(block.getType(), 1.0);
+            blocksBrokenPerCraft.replace(craft, blocksBrokenPerCraft.get(craft) + modifier);
         }
-
-        Iterator<Block> iterator = event.blockList().iterator();
-        while (iterator.hasNext()) {
-            Block block = iterator.next();
-            if (block == null || block.getBlockData() == null) {
-                continue;
-            }
-
-            boolean protectCraftBlock = false;
-            double modifier = 1.0;
-
-            if(Settings.BlockDamageMultiplier.containsKey(block.getType())) {
-                modifier = Settings.BlockDamageMultiplier.get(block.getType());
-            }
-
-            if (craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(block.getLocation()))) {
-                hitPointDamage += modifier * damagePerHit * craftDamagePerHit;
-            }
-
-            if (event.getEntityType().equals(EntityType.PRIMED_TNT)
-                && !craftHP.getHitPointState().equals(CraftHitPointState.CRITICAL)) {
-                protectCraftBlock = true;
-            }
-
-            if (!craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(block.getLocation()))) {
-                protectCraftBlock = false;
-            }
-
-            if (Settings.IgnoreBlockProtection.contains(block.getType())) {
-                protectCraftBlock = false;
-            }
-
-            if (protectCraftBlock) {
-                iterator.remove();
-            }
+        event.blockList().removeAll(protectedBlocks);
+        for (PlayerCraft craft : blocksBrokenPerCraft.keySet()) {
+            @NotNull CraftHitPoints craftHP = MovecraftHitPoints.getInstance().getHitPointManager().getCraftHitPoints(craft);
+            double craftDamagePerHit = craft.getType().getDoubleProperty(Keys.CRAFT_DAMAGE_MODIFIER);
+            craftHP.removeHitPoints(blocksBrokenPerCraft.get(craft) * damagePerHit * craftDamagePerHit);
         }
-        craftHP.removeHitPoints(hitPointDamage);
+    }
+
+    //All blocks that return true is removed from the event.blocklist
+    private boolean canProtectBlock(PlayerCraft craft, Block block, CraftHitPoints craftHP) {
+        if (!craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(block.getLocation()))) return false;
+        if (craftHP.getHitPointState().equals(CraftHitPointState.CRITICAL)) return false;
+        if (Settings.IgnoreBlockProtection.contains(block.getType())) return false;
+        if (isPartOfMesh(block) ) return false;
+        return true;
+    }
+
+    private boolean isPartOfMesh(Block block) {
+        int counter = 0;
+        if (block.getRelative(BlockFace.UP).isEmpty()) counter++;
+        if (block.getRelative(BlockFace.DOWN).isEmpty()) counter++;
+        if (block.getRelative(BlockFace.SOUTH).isEmpty()) counter++;
+        if (block.getRelative(BlockFace.WEST).isEmpty()) counter++;
+        if (block.getRelative(BlockFace.NORTH).isEmpty()) counter++;
+        if (block.getRelative(BlockFace.EAST).isEmpty()) counter++;
+        System.out.println(counter);
+        return counter >= 4;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
