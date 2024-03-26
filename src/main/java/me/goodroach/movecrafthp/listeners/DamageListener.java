@@ -21,10 +21,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,18 +34,25 @@ public class DamageListener implements Listener {
         if (event.isCancelled()) return;
 
         double damagePerHit = Settings.BaseDamageMultiplier;
+        //This is allows for multiple ships to get damaged.
         Map<PlayerCraft, Double> blocksBrokenPerCraft = new HashMap<>();
+        //This set prevents the listed blocks from breaking via tnt blast.
         Set<Block> protectedBlocks = new HashSet<>();
 
         for (Block block : event.blockList()) {
+            //This block of code checks if the craft should take damage.
             if (block == null) continue;
             Location location = block.getLocation();
             PlayerCraft craft = fastNearestPlayerCraftToLoc(location);
-
             if (MovecraftHitPoints.getInstance().getHitPointManager().getCraftHitPoints(craft) == null) continue;
             CraftHitPoints craftHP = MovecraftHitPoints.getInstance().getHitPointManager().getCraftHitPoints(craft);
-            if (!blocksBrokenPerCraft.containsKey(craft)) blocksBrokenPerCraft.put(craft, 0.0);
-            if (canProtectBlock(craft, block, craftHP)) {
+            if (!craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(block.getLocation()))) continue;
+
+            //This block of code determines if that block should be broken.
+            if (!blocksBrokenPerCraft.containsKey(craft)) {
+                blocksBrokenPerCraft.put(craft, 0.0);
+            }
+            if (canProtectBlock(block, craftHP)) {
                 protectedBlocks.add(block);
             }
             double modifier = Settings.BlockDamageMultiplier.getOrDefault(block.getType(), 1.0);
@@ -62,8 +67,7 @@ public class DamageListener implements Listener {
     }
 
     //All blocks that return true is removed from the event.blocklist
-    private boolean canProtectBlock(PlayerCraft craft, Block block, CraftHitPoints craftHP) {
-        if (!craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(block.getLocation()))) return false;
+    private boolean canProtectBlock(Block block, CraftHitPoints craftHP) {
         if (craftHP.getHitPointState().equals(CraftHitPointState.CRITICAL)) return false;
         if (Settings.IgnoreBlockProtection.contains(block.getType())) return false;
         if (isPartOfMesh(block) ) return false;
@@ -79,7 +83,7 @@ public class DamageListener implements Listener {
         if (block.getRelative(BlockFace.NORTH).isEmpty()) counter++;
         if (block.getRelative(BlockFace.EAST).isEmpty()) counter++;
         System.out.println(counter);
-        return counter >= 4;
+        return counter >= 5;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

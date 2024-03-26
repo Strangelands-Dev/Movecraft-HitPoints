@@ -10,3 +10,4 @@ HitPointModifierBlocks:
   "minecraft:wool": 1.5
 IgnoreBlockProtection:
   -"minecraft:slabs"
+AllowMeshArmor: false
